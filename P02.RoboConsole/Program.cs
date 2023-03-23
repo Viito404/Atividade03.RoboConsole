@@ -7,198 +7,226 @@ namespace P02.RoboConsole
 {
      internal class Program
      {
-          static void Main(string[] args)
+          #region Variáveis Globais;
 
+          static string[] dimensaoEspacial = new string[1];
+
+          static string[] posicaoEspacial = new string[2];
+
+          #endregion
+
+          #region Funções do Robo;
+
+          static string GerarMenu()
+          {
+               Console.Clear();
+               Console.WriteLine("===============================");
+               Console.WriteLine("\nPerdido em Marte!\n");
+               Console.WriteLine("===============================");
+
+               Console.Write("\nDigite S para sair, ou qualquer outro botão para continuar:\n> ");
+
+               string opcao = Console.ReadLine();
+               return opcao;
+          }
+
+          static string PegarValores(string mensagem, string status)
+          {
+               if (status == "limpeza")
+               {
+                    Console.Clear();
+               }
+
+
+               Console.Write(mensagem);
+               string valor = Console.ReadLine();
+               valor = valor.ToUpper();
+               return valor;
+          }
+
+          static bool PosicaoInvalida(int posicaoInicialX, int comprimentoX, int posicaoInicialY, int alturaY, char direcao)
+          {
+               return
+                    posicaoInicialX > comprimentoX ||
+                    posicaoInicialY > alturaY ||
+                    direcao != 'N' &&
+                    direcao != 'S' &&
+                    direcao != 'L' &&
+                    direcao != 'O';
+          }
+
+          static void ApresentarMensagem(string mensagem, string tipo)
+          {
+               if (tipo == "ERRO")
+               {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(mensagem);
+                    Console.ReadLine();
+                    Console.ResetColor();
+               }
+               else
+               {
+                    Console.WriteLine(mensagem);
+                    Console.ReadLine();
+               }
+          }
+
+          static void VerificaDirecao(int comprimentoX, int alturaY, ref int posicaoInicialX, ref int posicaoInicialY, ref char Direcao, char[] comandosArmazenados)
+          {
+               for (int i = 0; i < Convert.ToInt32(comandosArmazenados.Length); i++)
+               {
+                    if (comandosArmazenados[i] == 'E' && Direcao == 'O')
+                    {
+                         Direcao = 'S';
+                         Console.WriteLine("\n> Câmeras apontadas para o Sul!");
+                         continue;
+                    }
+                    if (comandosArmazenados[i] == 'D' && Direcao == 'O')
+                    {
+                         Direcao = 'N';
+                         Console.WriteLine("\n> Câmeras apontadas para o Norte!");
+                         continue;
+                    }
+                    if (comandosArmazenados[i] == 'E' && Direcao == 'N')
+                    {
+                         Direcao = 'O';
+                         Console.WriteLine("\n> Câmeras apontadas para o Oeste!");
+                         continue;
+                    }
+                    if (comandosArmazenados[i] == 'D' && Direcao == 'N')
+                    {
+                         Direcao = 'L';
+                         Console.WriteLine("\n> Câmeras apontadas para o Leste!");
+                         continue;
+                    }
+                    if (comandosArmazenados[i] == 'D' && Direcao == 'L')
+                    {
+                         Direcao = 'S';
+                         Console.WriteLine("\n> Câmeras apontadas para o Sul!");
+                         continue;
+                    }
+                    if (comandosArmazenados[i] == 'E' && Direcao == 'L')
+                    {
+                         Direcao = 'N';
+                         Console.WriteLine("\n> Câmeras apontadas para o Norte!");
+                         continue;
+                    }
+                    if (comandosArmazenados[i] == 'E' && Direcao == 'S')
+                    {
+                         Direcao = 'L';
+                         Console.WriteLine("\n> Câmeras apontadas para o Leste!");
+                         continue;
+                    }
+                    if (comandosArmazenados[i] == 'D' && Direcao == 'S')
+                    {
+                         Direcao = 'O';
+                         Console.WriteLine("\n> Câmeras apontadas para o Oeste!");
+                         continue;
+                    }
+
+                    else if (comandosArmazenados[i] == 'M' && Direcao == 'O' && posicaoInicialX > 0)
+                    {
+                         posicaoInicialX--;
+                         Console.WriteLine("\n> Avante!");
+                         continue;
+                    }
+
+                    else if (comandosArmazenados[i] == 'M' && Direcao == 'N' && posicaoInicialY < alturaY)
+                    {
+                         posicaoInicialY++;
+                         Console.WriteLine("\n> Avante!");
+                         continue;
+                    }
+                    else if (comandosArmazenados[i] == 'M' && Direcao == 'L' && posicaoInicialX < comprimentoX)
+                    {
+                         posicaoInicialX++;
+                         Console.WriteLine("\n> Avante!");
+                         continue;
+                    }
+                    else if (comandosArmazenados[i] == 'M' && Direcao == 'S' && posicaoInicialY > 0)
+                    {
+                         posicaoInicialY--;
+                         Console.WriteLine("\n> Avante!");
+                         continue;
+                    }
+                    else
+                    {
+                         Console.WriteLine("\n> Chegou na borda de Marte!");
+                         continue;
+                    }
+
+               }
+          }
+
+          static void PegarPosicaoInicial(int robos, out string posicaoInicial, out int posicaoInicialX, out int posicaoInicialY, out char Direcao)
+          {
+               posicaoInicial = PegarValores($"> Entre com a posição inicial do '{robos + 1}º Tupiniquim' (X Y Direção)\n: ", "nada");
+               posicaoEspacial = posicaoInicial.Split(" ");
+
+               posicaoInicialX = Convert.ToInt32(posicaoEspacial[0].Trim());
+               posicaoInicialY = Convert.ToInt32(posicaoEspacial[1].Trim());
+               Direcao = Convert.ToChar(posicaoEspacial[2].Trim());
+          }
+
+          #endregion
+
+          static void Main(string[] args)
           {
                do
                {
-                    #region Menu e opção de sair;
+                    string opcao = GerarMenu();
 
-                    Console.Clear();
-                    Console.WriteLine("===============================");
-                    Console.WriteLine("\nPerdido em Marte!\n");
-                    Console.WriteLine("===============================");
-
-                    Console.Write("\nDigite S para sair, ou qualquer outro botão para continuar:\n> ");
-
-                    string op;
-                    op = Console.ReadLine();
-
-                    if (op == "s" || op == "S")
+                    if (opcao == "s" || opcao == "S")
                     {
                          Console.WriteLine("\nSaindo...");
                          break;
                     }
 
-                    #endregion
+                    string valorDimensao = PegarValores("> Entre com o valor da dimensão da área que deseja explorar (inteiros separados por espaços para X e Y)\n: ", "limpeza");
 
-                    #region Entrada do valor da dimensão;
+                    dimensaoEspacial = valorDimensao.Split(" ");
 
-                    Console.Clear();
+                    int comprimentoX = Convert.ToInt32(dimensaoEspacial[0].Trim());
+                    int alturaY = Convert.ToInt32(dimensaoEspacial[1].Trim());
 
-                    Console.Write("> Entre com o valor da dimensão da área que deseja explorar (inteiros separados por espaços para X e Y)\n: ");
-                    string xy = Console.ReadLine();
-
-                    #endregion
-
-                    #region Separação da String em duas variáveis;
-
-                    string[] dm = new string[2];
-
-                    dm = xy.Split(" ");
-                    int x = Convert.ToInt32(dm[0].Trim());
-                    int y = Convert.ToInt32(dm[1].Trim());
-
-                    #endregion
-                   
                     Console.Write("\n> Certo... Agora que você já definiu o tamanho do mapa, vamos dar um local de origem ao nosso pequeno explorador.");
                     Console.Write("\n\n> Por favor, defina a posição que o seu robô irá começar, indicando sua direção:");
-                    Console.Write("\nN = Norte;\nL = Leste;\nS = Sul;\nO = Oeste.");
+                    Console.Write("\nN = Norte;\nL = Leste;\nS = Sul;\nO = Oeste.\n\n");
 
-                    for (int es = 0; es < 2; es++)
+                    for (int robos = 0; robos < 2; robos++)
                     {
-                         #region Entrada da posição inicial;
-
-                         Console.Write($"\n\n> Entre com a posição inicial do '{es + 1}º Tupiniquim' (X Y Direção)\n: ");
-
-                         string posi = Console.ReadLine();
-                         posi = posi.ToUpper();
-                         string[] dirp = new string[3];
-                         dirp = posi.Split(" ");
-
-                         #endregion
-
-                         #region Conversão dos dados da Array, e atribuição em variáveis distintas;
-
-                         int xx = Convert.ToInt32(dirp[0].Trim());
-                         int yy = Convert.ToInt32(dirp[1].Trim());
-                         char dxyi = Convert.ToChar(dirp[2].Trim());
-
-                         #endregion
-
-                         #region Verifica se os valores estão dentro dos parâmetros de dimensão;
-
-                         if (xx > x || yy > y)
+                         if (robos == 1)
                          {
-                              Console.Write("\n> Entre com valores válidos, dentro dos parâmetros criados.");
                               Console.Clear();
-                              Console.Write("\n\n> Entre com a posição inicial do 'Tupiniquim I' (X Y Direção)\n: ");
-                              posi = Console.ReadLine();
                          }
 
-                         #endregion
+                         string posicaoInicial;
+                         int posicaoInicialX, posicaoInicialY;
+                         char direcao;
 
-                         #region Entrada das instruções;
+                         PegarPosicaoInicial(robos, out posicaoInicial, out posicaoInicialX, out posicaoInicialY, out direcao);
+
+                         while (PosicaoInvalida(posicaoInicialX, comprimentoX, posicaoInicialY, alturaY, direcao))
+                         {
+                              ApresentarMensagem("\n> Entre com valores válidos, dentro dos parâmetros criados.", "ERRO");
+                              Console.Clear();
+                              PegarPosicaoInicial(robos, out posicaoInicial, out posicaoInicialX, out posicaoInicialY, out direcao);
+                         }
 
                          Console.Write("\n> Perfeito. Está na hora de ensinar esse robô a andar.");
                          Console.Write("\n> Defina uma sequência de instruções para movimentar o robô (ex:mmemmdm):");
-                         Console.Write("\nM = Mover;\nE = Virar 90º para a esquerda;\nD = Virar 90º para a direita.\n:");
-                         string comm = Console.ReadLine();
+                         string comandos = PegarValores("\nM = Mover;\nE = Virar 90º para a esquerda;\nD = Virar 90º para a direita.\n:", "nada");
+                         comandos = comandos.ToUpper();
 
-                         comm = comm.ToUpper();
+                         char[] comandosArmazenados = comandos.ToCharArray();
 
+                         VerificaDirecao(comprimentoX, alturaY, ref posicaoInicialX, ref posicaoInicialY, ref direcao, comandosArmazenados);
 
-                         char[] com = comm.ToCharArray();
-
-                         #endregion
-
-                         #region Verificação de direção, e soma ou subtração da posição X e Y;
-
-                         for (int i = 0; i < Convert.ToInt32(com.Length); i++)
-                         {
-                              if (com[i] == 'E' && dxyi == 'O')
-                              {
-                                   dxyi = 'S';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Sul!");
-                                   continue;
-                              }
-                              if (com[i] == 'D' && dxyi == 'O')
-                              {
-                                   dxyi = 'N';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Norte!");
-                                   continue;
-                              }
-                              if (com[i] == 'E' && dxyi == 'N')
-                              {
-                                   dxyi = 'O';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Oeste!");
-                                   continue;
-                              }
-                              if (com[i] == 'D' && dxyi == 'N')
-                              {
-                                   dxyi = 'L';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Leste!");
-                                   continue;
-                              }
-                              if (com[i] == 'D' && dxyi == 'L')
-                              {
-                                   dxyi = 'S';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Sul!");
-                                   continue;
-                              }
-                              if (com[i] == 'E' && dxyi == 'L')
-                              {
-                                   dxyi = 'N';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Norte!");
-                                   continue;
-                              }
-                              if (com[i] == 'E' && dxyi == 'S')
-                              {
-                                   dxyi = 'L';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Leste!");
-                                   continue;
-                              }
-                              if (com[i] == 'D' && dxyi == 'S')
-                              {
-                                   dxyi = 'O';
-                                   Console.WriteLine("\n> Câmeras apontadas para o Oeste!");
-                                   continue;
-                              }
-
-                              else if (com[i] == 'M' && dxyi == 'O' && xx < x && xx > 0)
-                              {
-                                   xx--;
-                                   Console.WriteLine("\n> Avante!");
-                                   continue;
-                              }
-
-                              else if (com[i] == 'M' && dxyi == 'N' && yy < y && yy > 0)
-                              {
-                                   yy++;
-                                   Console.WriteLine("\n> Avante!");
-                                   continue;
-                              }
-                              else if (com[i] == 'M' && dxyi == 'L' && xx < x && xx > 0)
-                              {
-                                   xx++;
-                                   Console.WriteLine("\n> Avante!");
-                                   continue;
-                              }
-                              else if (com[i] == 'M' && dxyi == 'S' && yy < y && yy > 0)
-                              {
-                                   yy--;
-                                   Console.WriteLine("\n> Avante!");
-                                   continue;
-                              }
-                              else
-                              {
-                                   Console.WriteLine("\n> Chegou na borda de Marte!");
-                                   continue;
-                              }
-
-                         }
-
-                         #endregion
-
-                         #region Impressão da posição e direção;
-
-                         Console.WriteLine($"\n'O {es + 1}º Tupiniquim' está na posição {xx} {yy} {dxyi}!");
-                         Console.ReadLine();
-
-                         #endregion
+                         ApresentarMensagem($"\n'O {robos + 1}º Tupiniquim' está na posição {posicaoInicialX} {posicaoInicialY} {direcao}!", "SUCESSO");
                     }
 
                } while (true);
           }
+
      }
 }
