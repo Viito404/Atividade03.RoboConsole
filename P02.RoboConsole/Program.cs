@@ -7,6 +7,64 @@ namespace P02.RoboConsole
 {
      internal class Program
      {
+          static void Main(string[] args)
+          {
+               do
+               {
+                    string opcao = GerarMenu();
+
+                    if (opcao == "s" || opcao == "S")
+                    {
+                         Console.WriteLine("\nSaindo...");
+                         break;
+                    }
+
+                    string valorDimensao = PegarValores("> Entre com o valor da dimensão da área que deseja explorar (inteiros separados por espaços para X e Y)\n: ", "limpeza");
+
+                    dimensaoEspacial = valorDimensao.Split(" ");
+
+                    int comprimentoX = Convert.ToInt32(dimensaoEspacial[0].Trim());
+                    int alturaY = Convert.ToInt32(dimensaoEspacial[1].Trim());
+
+                    Console.Write("\n> Certo... Agora que você já definiu o tamanho do mapa, vamos dar um local de origem ao nosso pequeno explorador.");
+                    Console.Write("\n\n> Por favor, defina a posição que o seu robô irá começar, indicando sua direção:");
+                    Console.Write("\nN = Norte;\nL = Leste;\nS = Sul;\nO = Oeste.\n\n");
+
+                    for (int robos = 0; robos < 2; robos++)
+                    {
+                         if (robos == 1)
+                         {
+                              Console.Clear();
+                         }
+
+                         string posicaoInicial;
+                         int posicaoInicialX, posicaoInicialY;
+                         char direcao;
+
+                         PegarPosicaoInicial(robos, out posicaoInicial, out posicaoInicialX, out posicaoInicialY, out direcao);
+
+                         while (PosicaoInvalida(posicaoInicialX, comprimentoX, posicaoInicialY, alturaY, direcao))
+                         {
+                              ApresentarMensagem("\n> Entre com valores válidos, dentro dos parâmetros criados.", "ERRO");
+                              Console.Clear();
+                              PegarPosicaoInicial(robos, out posicaoInicial, out posicaoInicialX, out posicaoInicialY, out direcao);
+                         }
+
+                         Console.Write("\n> Perfeito. Está na hora de ensinar esse robô a andar.");
+                         Console.Write("\n> Defina uma sequência de instruções para movimentar o robô (ex:mmemmdm):");
+                         string comandos = PegarValores("\nM = Mover;\nE = Virar 90º para a esquerda;\nD = Virar 90º para a direita.\n:", "nada");
+                         comandos = comandos.ToUpper();
+
+                         char[] comandosArmazenados = comandos.ToCharArray();
+
+                         VerificaDirecao(comprimentoX, alturaY, ref posicaoInicialX, ref posicaoInicialY, ref direcao, comandosArmazenados);
+
+                         ApresentarMensagem($"\n'O {robos + 1}º Tupiniquim' está na posição {posicaoInicialX} {posicaoInicialY} {direcao}!", "SUCESSO");
+                    }
+
+               } while (true);
+          }
+
           #region Variáveis Globais;
 
           static string[] dimensaoEspacial = new string[1];
@@ -169,64 +227,6 @@ namespace P02.RoboConsole
           }
 
           #endregion
-
-          static void Main(string[] args)
-          {
-               do
-               {
-                    string opcao = GerarMenu();
-
-                    if (opcao == "s" || opcao == "S")
-                    {
-                         Console.WriteLine("\nSaindo...");
-                         break;
-                    }
-
-                    string valorDimensao = PegarValores("> Entre com o valor da dimensão da área que deseja explorar (inteiros separados por espaços para X e Y)\n: ", "limpeza");
-
-                    dimensaoEspacial = valorDimensao.Split(" ");
-
-                    int comprimentoX = Convert.ToInt32(dimensaoEspacial[0].Trim());
-                    int alturaY = Convert.ToInt32(dimensaoEspacial[1].Trim());
-
-                    Console.Write("\n> Certo... Agora que você já definiu o tamanho do mapa, vamos dar um local de origem ao nosso pequeno explorador.");
-                    Console.Write("\n\n> Por favor, defina a posição que o seu robô irá começar, indicando sua direção:");
-                    Console.Write("\nN = Norte;\nL = Leste;\nS = Sul;\nO = Oeste.\n\n");
-
-                    for (int robos = 0; robos < 2; robos++)
-                    {
-                         if (robos == 1)
-                         {
-                              Console.Clear();
-                         }
-
-                         string posicaoInicial;
-                         int posicaoInicialX, posicaoInicialY;
-                         char direcao;
-
-                         PegarPosicaoInicial(robos, out posicaoInicial, out posicaoInicialX, out posicaoInicialY, out direcao);
-
-                         while (PosicaoInvalida(posicaoInicialX, comprimentoX, posicaoInicialY, alturaY, direcao))
-                         {
-                              ApresentarMensagem("\n> Entre com valores válidos, dentro dos parâmetros criados.", "ERRO");
-                              Console.Clear();
-                              PegarPosicaoInicial(robos, out posicaoInicial, out posicaoInicialX, out posicaoInicialY, out direcao);
-                         }
-
-                         Console.Write("\n> Perfeito. Está na hora de ensinar esse robô a andar.");
-                         Console.Write("\n> Defina uma sequência de instruções para movimentar o robô (ex:mmemmdm):");
-                         string comandos = PegarValores("\nM = Mover;\nE = Virar 90º para a esquerda;\nD = Virar 90º para a direita.\n:", "nada");
-                         comandos = comandos.ToUpper();
-
-                         char[] comandosArmazenados = comandos.ToCharArray();
-
-                         VerificaDirecao(comprimentoX, alturaY, ref posicaoInicialX, ref posicaoInicialY, ref direcao, comandosArmazenados);
-
-                         ApresentarMensagem($"\n'O {robos + 1}º Tupiniquim' está na posição {posicaoInicialX} {posicaoInicialY} {direcao}!", "SUCESSO");
-                    }
-
-               } while (true);
-          }
 
      }
 }
